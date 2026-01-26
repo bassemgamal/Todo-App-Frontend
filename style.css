@@ -8,11 +8,13 @@
 body {
   background: var(--bg-color);
   color: var(--text-color);
-  transition: background 0.3s ease, color 0.3s ease;
+  transition:
+    all 0.3s ease,
+    color 0.3s ease;
 }
-*{
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 body {
   display: flex;
@@ -24,7 +26,7 @@ body {
   width: 350px;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   background: var(--card-color);
   transition: background 0.3s ease;
 }
@@ -42,7 +44,9 @@ input {
 button {
   background: var(--btn-color);
   color: var(--text-color);
-  transition: background 0.3s ease, transform 0.2s;
+  transition:
+    all 0.3s ease,
+    transform 0.2s;
   cursor: pointer;
   border: none;
   border-radius: 5px;
@@ -53,6 +57,7 @@ button {
   width: 100%;
   background: var(--btn-color);
   color: var(--text-color);
+  transition: all 0.3s ease;
 }
 .filters {
   display: flex;
@@ -62,6 +67,8 @@ button {
 .filters button {
   background: var(--btn-color);
   color: var(--text-color);
+  min-width: 70px;
+  transition: all 0.3s ease;
 }
 ul {
   list-style: none;
@@ -78,18 +85,20 @@ li {
   border-radius: 8px;
   cursor: pointer;
   animation: fadeIn 0.3s ease;
-
+  transition:
+    background 0.3s ease,
+    transform 0.2s;
 }
 li:hover {
   background: #eaeaea;
   transform: scale(1.02);
 }
 
-li p{
+li p {
   color: var(--text-color);
 }
 
-li.completed p{
+li.completed p {
   text-decoration: line-through;
   color: red;
   opacity: 0.6;
@@ -101,7 +110,7 @@ body.dark {
   --btn-color: #696666;
 }
 @keyframes fadeIn {
-  from{
+  from {
     opacity: 0;
     transform: translateY(10px);
   }
@@ -111,7 +120,7 @@ body.dark {
   }
 }
 @keyframes fadeOut {
-  from{
+  from {
     opacity: 1;
     transform: translateY(0);
   }
@@ -133,17 +142,37 @@ button:active {
   color: red;
   justify-content: center;
   text-align: center;
-  transition: color 0.3s ease,textcontent 0.3s ease;
+  transition:
+    color 0.3s ease,
+    textcontent 0.3s ease;
 }
-#auther{
+#auther {
   padding: 10px;
-    margin-top: 20px;
-    font-size: 12px;
-    text-align: center;
-    color: var(--text-color);
-    transition: color 0.3s ease;
+  margin-top: 20px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--text-color);
+  transition: color 0.3s ease;
 }
-#auther:hover{
-    color: #adc464;
-    transform: scale(1.5);
+#auther:hover {
+  color: #adc464;
+  transform: scale(1.5);
+}
+#toggleTheme #logoutBtn {
+  max-height: 2px;
+  position: fixed;
+  padding: 10px;
+  border-radius: 5px;
+  background: var(--btn-color);
+  color: var(--text-color);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+#controlsBtns {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  align-items: center;
+
 }
