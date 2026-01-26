@@ -108,8 +108,6 @@ completedBtn.onclick = () => {
 
 // عرض المهام
 function renderTasks() {
-  console.log(localStorage.getItem("token"));
-
   taskList.innerHTML = "";
 
   let filteredTasks = tasks;
