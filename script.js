@@ -229,21 +229,8 @@ async function checkAuth() {
     localStorage.removeItem("token");
     window.location.href = "auth.html";
   } else {
-    const data = await res.json();
-
-    // بعض ال APIs بترجع { name: "..." } وبعضها بترجع { user: { name: "..." } }
-    // الكود ده هيجرب الاتنين
-    const userName = data.name || (data.user && data.user.name);
-    console.log(userName);
-    console.log(data.name);
-    console.log(data.user);
-    console.log(data.user.name);
-
-    if (userName) {
-      userBtn.textContent = userName;
-    } else {
-      userBtn.textContent = "Guest";
-    }
+    const storedName = localStorage.getItem("username");
+    userBtn.textContent = storedName || "Guest";
   }
 }
 
