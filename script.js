@@ -1,6 +1,7 @@
 const taskInput = document.getElementById("taskInput");
 const addBtn = document.getElementById("addBtn");
 const taskList = document.getElementById("taskList");
+const userBtn = document.getElementById("userBtn");
 
 token = localStorage.getItem("token");
 
@@ -109,7 +110,6 @@ completedBtn.onclick = () => {
 // عرض المهام
 function renderTasks() {
   taskList.innerHTML = "";
-
   let filteredTasks = tasks;
   if (filter === "active") filteredTasks = tasks.filter((t) => !t.completed);
   if (filter === "completed") filteredTasks = tasks.filter((t) => t.completed);
@@ -205,6 +205,7 @@ function showMessage(msg, success = false) {
 function logout() {
   localStorage.removeItem("token");
   window.location.href = "auth.html";
+  userBtn.textContent = "Guest";
 }
 
 async function checkAuth() {
@@ -226,6 +227,14 @@ async function checkAuth() {
   if (!res.ok) {
     localStorage.removeItem("token");
     window.location.href = "auth.html";
+  } else {
+    const data = await res.json();
+    if (data.name) {
+      userBtn.textContent = data.name;
+      console.log(data.name);
+    } else {
+      userBtn.textContent = "Guest";
+    }
   }
 }
 
