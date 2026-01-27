@@ -204,6 +204,7 @@ function showMessage(msg, success = false) {
 
 function logout() {
   localStorage.removeItem("token");
+  localStorage.removeItem("username");
   window.location.href = "auth.html";
   userBtn.textContent = "Guest";
 }
@@ -229,9 +230,14 @@ async function checkAuth() {
     window.location.href = "auth.html";
   } else {
     const data = await res.json();
-    if (data.name) {
-      userBtn.textContent = data.name;
-      console.log(data.name);
+    console.log("CheckAuth Response:", data);
+
+    // بعض ال APIs بترجع { name: "..." } وبعضها بترجع { user: { name: "..." } }
+    // الكود ده هيجرب الاتنين
+    const userName = data.name || (data.user && data.user.name);
+
+    if (userName) {
+      userBtn.textContent = userName;
     } else {
       userBtn.textContent = "Guest";
     }
