@@ -85,8 +85,6 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     // Save username if available
     const name = data.name || (data.user && data.user.name);
     if (name) localStorage.setItem("username", name);
-    console.log(name);
-
     window.location.href = "index.html";
   } catch {
     showMessage("Server error. ❌");
