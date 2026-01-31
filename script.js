@@ -1,9 +1,13 @@
+const Public_URL = "https://todo-app-production-6cf0.up.railway.app";
 const taskInput = document.getElementById("taskInput");
 const addBtn = document.getElementById("addBtn");
 const taskList = document.getElementById("taskList");
 const userBtn = document.getElementById("userBtn");
+const changeLangBtn = document.getElementById("changeLangBtn");
 
 token = localStorage.getItem("token");
+// localStorage.getItem("lang");
+// checkLang();
 
 const allBtn = document.getElementById("allBtn");
 const activeBtn = document.getElementById("activeBtn");
@@ -35,14 +39,7 @@ let filter = "all";
 // 🔹 جلب المهام من API
 async function fetchTasks() {
   try {
-    const res = await fetch(
-      "https://todo-app-production-6cf0.up.railway.app/api/todos",
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      },
-    );
+    const res = await authFetch(`${Public_URL}/api/todos`);
     tasks = await res.json();
     if (!res.ok) {
       showMessage(tasks.message || "Something went wrong.");
@@ -55,6 +52,9 @@ async function fetchTasks() {
   }
 }
 
+function showLoader(show) {
+  document.getElementById("loader").style.display = show ? "block" : "none";
+};
 // استدعاء عند تحميل الصفحة
 fetchTasks();
 
@@ -67,17 +67,15 @@ addBtn.addEventListener("click", async () => {
   }
 
   try {
-    const res = await fetch(
-      "https://todo-app-production-6cf0.up.railway.app/api/todos",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ text }),
+    showLoader(true);
+    const res = await authFetch(`${Public_URL}/api/todos`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-    );
+      body: JSON.stringify({ text }),
+    });
 
     const newTask = await res.json();
     if (!res.ok) {
@@ -124,20 +122,17 @@ function renderTasks() {
     // ✅ تعليم كمكتمل
     li.onclick = async () => {
       try {
-        const res = await fetch(
-          `https://todo-app-production-6cf0.up.railway.app/api/todos/${task._id}`,
-          {
-            method: "PUT",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              text: task.text,
-              completed: !task.completed,
-            }),
+        showLoader(true);
+        const res = await authFetch(`${Public_URL}/api/todos/${task._id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+          body: JSON.stringify({
+            text: task.text,
+            completed: !task.completed,
+          }),
+        });
         const updatedTask = await res.json();
         if (!res.ok) {
           showMessage(updatedTask.message || "Something went wrong.");
@@ -158,17 +153,14 @@ function renderTasks() {
       e.stopPropagation();
       li.style.animation = "fadeOut 0.3s ease";
       try {
+        showLoader(true);
         setTimeout(async () => {
-          await fetch(
-            `https://todo-app-production-6cf0.up.railway.app/api/todos/${task._id}`,
-            {
-              method: "DELETE",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
+          await authFetch(`${Public_URL}/api/todos/${task._id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
             },
-          )
+          })
             .then((res) => {
               if (!res.ok) {
                 throw new Error("Deleted failed.");
@@ -215,23 +207,89 @@ async function checkAuth() {
     return (window.location.href = "auth.html");
   }
 
-  const res = await fetch(
-    "https://todo-app-production-6cf0.up.railway.app/api/auth/me",
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      },
+  if(res.status === 401){
+    localStorage.removeItem("token");
+    alert("Session expired. Please log in again.");
+    return (window.location.href = "auth.html");
+  }
+  
+  const res = await authFetch(`${Public_URL}/api/auth/me`, {
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+  });
 
   if (!res.ok) {
     localStorage.removeItem("token");
     window.location.href = "auth.html";
   } else {
     const storedName = localStorage.getItem("username");
-    userBtn.textContent = storedName || "Guest";
+    userBtn.textContent = `Hi ${storedName.toUpperCase()}, Welcome Back!` || "Guest";
   }
 }
 
+// function checkLang() {
+//   if (localStorage.getItem("lang") === "ar") {
+//     changeLangBtn.textContent = "English";
+//     document.body.style.direction = "rtl";
+//     themeToggle.textContent = "لايت ☀️";
+//     logoutBtn.textContent = "تسجيل الخروج ⬅️";
+//     userBtn.textContent = "مرحبا " + localStorage.getItem("username") + " نورت";
+//     addBtn.textContent = "أضافة";
+//     taskInput.placeholder = "اكتب مهمة...";
+//     allBtn.textContent = "الكل";
+//     activeBtn.textContent = "النشطة";
+//     completedBtn.textContent = "المكتملة";
+//     message.textContent = "";
+//     auther.textContent = "أنشئ بواسطة باسم جمال";
+//   } else {
+//     changeLangBtn.textContent = "العربية";
+//     document.body.style.direction = "ltr";
+//     themeToggle.textContent = "Light 🌙";
+//     logoutBtn.textContent = "Logout ⬅️";
+//     userBtn.textContent =
+//       "Hi " + localStorage.getItem("username") + " Welcome Back!";
+//     addBtn.textContent = "Add";
+//     taskInput.placeholder = "Write a task...";
+//     allBtn.textContent = "All";
+//     activeBtn.textContent = "Active";
+//     completedBtn.textContent = "Completed";
+//     message.textContent = "";
+//     auther.textContent = "Created by Bassem Gamal";
+//   }
+// }
+
+// function changeLang() {
+//   if (localStorage.getItem("lang") === "en") {
+//     localStorage.setItem("lang", "ar");
+//     checkLang();
+//     window.location.reload();
+//   } else {
+//     localStorage.setItem("lang", "en");
+//     checkLang();
+//     window.location.reload();
+//   }
+// }
+
 checkAuth();
+
+async function authFetch(url, options = {}) {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      ...(options.headers || {})
+    }
+  });
+
+  if (res.status === 401) {
+    localStorage.removeItem("token");
+    alert("Session expired. Please log in again.");
+    window.location.href = "auth.html";
+    throw new Error("Unauthorized");
+  }
+  return res;
+}
