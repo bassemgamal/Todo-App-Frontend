@@ -39,7 +39,9 @@ let filter = "all";
 // 🔹 جلب المهام من API
 async function fetchTasks() {
   try {
+    showLoader(true);
     const res = await authFetch(`${Public_URL}/api/todos`);
+    showLoader(false);
     tasks = await res.json();
     if (!res.ok) {
       showMessage(tasks.message || "Something went wrong.");
@@ -76,7 +78,7 @@ addBtn.addEventListener("click", async () => {
       },
       body: JSON.stringify({ text }),
     });
-
+    showLoader(false);
     const newTask = await res.json();
     if (!res.ok) {
       showMessage(newTask.message || "Something went wrong.");
@@ -133,6 +135,7 @@ function renderTasks() {
             completed: !task.completed,
           }),
         });
+        showLoader(false);
         const updatedTask = await res.json();
         if (!res.ok) {
           showMessage(updatedTask.message || "Something went wrong.");
@@ -161,6 +164,7 @@ function renderTasks() {
               "Content-Type": "application/json",
             },
           })
+            .finally(() => showLoader(false))
             .then((res) => {
               if (!res.ok) {
                 throw new Error("Deleted failed.");
@@ -212,7 +216,7 @@ async function checkAuth() {
     alert("Session expired. Please log in again.");
     return (window.location.href = "auth.html");
   }
-  
+
   const res = await authFetch(`${Public_URL}/api/auth/me`, {
     headers: {
       "Content-Type": "application/json",
