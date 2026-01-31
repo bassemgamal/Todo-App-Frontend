@@ -228,7 +228,7 @@ async function checkAuth() {
     window.location.href = "auth.html";
   } else {
     const storedName = localStorage.getItem("username");
-    userBtn.textContent = `Hi ${storedName.toUpperCase()}, Welcome Back!` || "Guest";
+    userBtn.textContent = `Hi ${storedName || "Guest"}, Welcome Back!`;
   }
 }
 
@@ -275,7 +275,7 @@ async function checkAuth() {
 //   }
 // }
 
-checkAuth();
+
 
 async function authFetch(url, options = {}) {
   const token = localStorage.getItem("token");
@@ -297,3 +297,5 @@ async function authFetch(url, options = {}) {
   }
   return res;
 }
+
+checkAuth();
